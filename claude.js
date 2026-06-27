@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
   // ── CORS: permite solicitudes desde tu dominio de Vercel y localhost ───
   const allowedOrigins = [
-    'https://apoya.vercel.app',        // cambia esto a tu dominio real
+    'https://apo-ya.vercel.app',        // cambia esto a tu dominio real
     'http://localhost:3000',
     'http://localhost:5173',
     'http://127.0.0.1:5500',           // Live Server de VS Code
