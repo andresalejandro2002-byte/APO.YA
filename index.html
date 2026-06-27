@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="APO.YA — Coordinación humanitaria en tiempo real para Venezuela. Conectamos a quienes necesitan ayuda con quienes pueden darla.">
+  <meta property="og:title" content="APO.YA — Coordinación Humanitaria Venezuela">
+  <meta property="og:description" content="Conectamos a quienes necesitan ayuda con quienes pueden darla. Terremoto Venezuela 2026.">
+  <meta name="theme-color" content="#0a0f1e">
+  <title>APO.YA — Coordinación Humanitaria Venezuela</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #060a14; font-family: system-ui, -apple-system, sans-serif; color: #e5e7eb; }
+    body { display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+    #root { width: 100%; max-width: 480px; min-height: 100vh; background: linear-gradient(135deg, #0a0f1e 0%, #0d1829 50%, #0a1520 100%); position: relative; overflow: hidden; }
+
+    /* ── Header ── */
+    .hdr { background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .logo-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .logo-text { font-size: 19px; font-weight: 800; color: #ef4444; letter-spacing: -1px; }
+    .logo-sub { font-size: 9px; color: rgba(255,255,255,0.35); margin-top: 1px; }
+    .chicken { font-size: 24px; display: inline-block; animation: chickenGlow 1.4s ease-in-out infinite; }
+    @keyframes chickenGlow { 0%,100% { filter: drop-shadow(0 0 6px #ef4444); transform: scale(1); } 50% { filter: drop-shadow(0 0 14px #ef4444); transform: scale(1.06); } }
+    .live-badge { font-size: 9px; background: rgba(239,68,68,0.15); color: #ef4444; padding: 3px 8px; border-radius: 99px; font-weight: 700; border: 1px solid rgba(239,68,68,0.3); display: flex; align-items: center; gap: 4px; }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #ef4444; animation: chickenGlow 1s infinite; }
+
+    /* ── Nav ── */
+    .nav { display: flex; background: rgba(0,0,0,0.25); border-bottom: 1px solid rgba(255,255,255,0.06); overflow-x: auto; position: sticky; top: 57px; z-index: 99; }
+    .nb { flex: 1; min-width: 58px; padding: 10px 4px 9px; background: none; border: none; color: rgba(255,255,255,0.35); font-size: 9px; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.25s; display: flex; flex-direction: column; align-items: center; gap: 2px; white-space: nowrap; }
+    .nb i { font-size: 17px; }
+    .nb.anb { color: #fff; border-bottom-color: #fff; background: rgba(255,255,255,0.05); }
+    .nb.rnb { color: #ef4444; border-bottom-color: #ef4444; background: rgba(239,68,68,0.08); }
+    .nb.gnb { color: #10b981; border-bottom-color: #10b981; background: rgba(16,185,129,0.08); }
+    .nb.snb { color: #3b82f6; border-bottom-color: #3b82f6; background: rgba(59,130,246,0.08); }
+    .nb.fnb { color: #f59e0b; border-bottom-color: #f59e0b; background: rgba(245,158,11,0.08); }
+
+    /* ── Screens ── */
+    .scr { padding: 16px; display: none; }
+    .scr.act { display: block; }
+
+    /* ── Typography helpers ── */
+    .sec-title { font-size: 17px; font-weight: 800; color: #f9fafb; margin-bottom: 4px; }
+    .sec-sub { font-size: 12px; color: rgba(255,255,255,0.45); margin-bottom: 16px; line-height: 1.5; }
+    .sec-label { font-size: 10px; color: rgba(255,255,255,0.35); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+    .back-lnk { font-size: 12px; color: rgba(255,255,255,0.4); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 14px; }
+    .back-lnk:hover { color: rgba(255,255,255,0.7); }
+
+    /* ── Big buttons (home) ── */
+    .big-btn { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; display: flex; align-items: center; gap: 14px; margin-bottom: 8px; transition: all 0.2s; background: rgba(255,255,255,0.04); }
+    .big-btn:hover { transform: translateY(-1px); }
+    .bb-icon { font-size: 24px; width: 42px; text-align: center; flex-shrink: 0; }
+    .bb-title { font-size: 14px; font-weight: 700; color: #f9fafb; }
+    .bb-desc { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 2px; line-height: 1.4; }
+    .btn-need { border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.07); } .btn-need:hover { background: rgba(239,68,68,0.13); border-color: rgba(239,68,68,0.5); }
+    .btn-give { border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.07); } .btn-give:hover { background: rgba(16,185,129,0.13); border-color: rgba(16,185,129,0.5); }
+    .btn-share { border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.07); } .btn-share:hover { background: rgba(59,130,246,0.13); border-color: rgba(59,130,246,0.5); }
+    .btn-fund { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.07); } .btn-fund:hover { background: rgba(245,158,11,0.13); border-color: rgba(245,158,11,0.5); }
+
+    /* ── Stats ── */
+    .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+    .stat-box { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 8px; text-align: center; }
+    .stat-num { font-size: 22px; font-weight: 800; font-family: monospace; }
+    .stat-lbl { font-size: 9px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+    /* ── Map ── */
+    .map-wrap { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; overflow: hidden; }
+    .map-hdr { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; }
+    .map-legend { display: flex; gap: 10px; font-size: 10px; color: rgba(255,255,255,0.4); }
+    .map-svg { width: 100%; display: block; background: #0a1018; }
+    .map-tooltip { position: fixed; background: #1c2333; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 8px 10px; font-size: 11px; pointer-events: none; display: none; z-index: 200; max-width: 180px; line-height: 1.4; }
+
+    /* ── Filters ── */
+    .filter-row { display: flex; gap: 8px; margin-bottom: 14px; }
+    .filter-sel { flex: 1; padding: 9px 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #e5e7eb; font-size: 12px; outline: none; }
+    .filter-sel option { background: #0d1829; color: #e5e7eb; }
+
+    /* ── Macros & tags (Necesito apoyo) ── */
+    .macro-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .macro-btn { padding: 15px 6px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #e5e7eb; font-size: 10px; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .macro-btn i { font-size: 22px; }
+    .macro-btn.act { border-color: rgba(239,68,68,0.6); background: rgba(239,68,68,0.12); color: #fca5a5; }
+    .sub-panel { background: rgba(0,0,0,0.2); border: 1px solid rgba(239,68,68,0.15); border-radius: 10px; padding: 12px; margin-bottom: 12px; display: none; }
+    .sub-panel.act { display: block; }
+    .tag-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; margin-bottom: 8px; }
+    .tag { padding: 5px 11px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 99px; font-size: 11px; color: rgba(255,255,255,0.55); cursor: pointer; transition: all 0.15s; }
+    .tag.sel { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.4); color: #fca5a5; }
+    .otro-input { width: 100%; padding: 8px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e5e7eb; font-size: 12px; outline: none; margin-top: 4px; display: none; }
+    .otro-input.vis { display: block; }
+
+    /* ── Registro tipo ── */
+    .reg-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .reg-btn { padding: 10px 6px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: rgba(255,255,255,0.5); font-size: 10px; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s; }
+    .reg-btn i { display: block; font-size: 18px; margin-bottom: 3px; }
+    .reg-btn.sel { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.4); color: #6ee7b7; }
+
+    /* ── GPS ── */
+    .gps-btn { width: 100%; padding: 11px; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); border-radius: 10px; color: #6ee7b7; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px; }
+    .gps-ok { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px; padding: 9px 12px; font-size: 11px; color: #6ee7b7; margin-bottom: 10px; display: none; }
+
+    /* ── Submit buttons ── */
+    .submit-red { width: 100%; padding: 14px; background: rgba(239,68,68,0.85); border: none; border-radius: 12px; color: white; font-weight: 800; font-size: 14px; cursor: pointer; margin-top: 6px; }
+    .submit-grn { width: 100%; padding: 14px; background: rgba(16,185,129,0.85); border: none; border-radius: 12px; color: #fff; font-weight: 800; font-size: 14px; cursor: pointer; }
+
+    /* ── Image zone ── */
+    .img-zone { background: rgba(245,158,11,0.05); border: 1px dashed rgba(245,158,11,0.3); border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+    .img-lbl { font-size: 11px; color: #f59e0b; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+    .img-drop { border: 2px dashed rgba(255,255,255,0.1); border-radius: 10px; padding: 14px; text-align: center; cursor: pointer; font-size: 12px; color: rgba(255,255,255,0.35); }
+    .img-drop i { display: block; font-size: 22px; margin-bottom: 4px; color: #f59e0b; }
+    .img-drop strong { display: block; font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 2px; }
+    .img-preview { width: 100%; max-height: 150px; object-fit: contain; border-radius: 8px; margin-bottom: 10px; background: #000; display: none; }
+    .img-status { display: none; padding: 10px 12px; border-radius: 8px; font-size: 12px; margin-bottom: 8px; line-height: 1.5; }
+    .img-status.loading { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); color: #f59e0b; }
+    .img-status.success { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); color: #6ee7b7; }
+    .img-status.error { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5; }
+    .ext-tag { padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; margin: 2px; display: inline-block; }
+    .ext-c { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
+    .ext-i { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.25); color: #93c5fd; }
+    .ext-u { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25); color: #fcd34d; }
+
+    /* ── Wizard ── */
+    .wiz-step { display: none; } .wiz-step.act { display: block; }
+    .step-lbl { font-size: 10px; color: rgba(255,255,255,0.35); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
+    .wq { font-size: 15px; font-weight: 700; color: #f9fafb; margin-bottom: 12px; }
+    .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .opt { padding: 12px 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #e5e7eb; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s; }
+    .opt i { display: block; font-size: 20px; margin-bottom: 4px; }
+    .opt:hover, .opt.sel { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.4); color: #6ee7b7; }
+    .loc-row { display: flex; gap: 8px; margin-bottom: 14px; }
+    .loc-opt { flex: 1; padding: 12px 6px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: rgba(255,255,255,0.5); font-size: 11px; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s; }
+    .loc-opt i { display: block; font-size: 18px; margin-bottom: 3px; }
+    .loc-opt.sel { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.4); color: #6ee7b7; }
+    .next-btn { width: 100%; padding: 11px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #e5e7eb; font-weight: 600; font-size: 13px; cursor: pointer; margin-top: 6px; }
+
+    /* ── Center cards ── */
+    .center-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+    .center-card:hover, .center-card.suggested { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.3); }
+    .center-card.suggested { border-color: rgba(16,185,129,0.4); }
+    .cc-name { font-size: 13px; font-weight: 700; color: #f9fafb; margin-bottom: 2px; }
+    .cc-loc { font-size: 11px; color: rgba(255,255,255,0.4); display: flex; align-items: center; gap: 3px; margin-bottom: 4px; }
+    .cc-contact { font-size: 11px; color: rgba(245,158,11,0.8); }
+    .cc-bars { display: flex; gap: 6px; margin-top: 8px; }
+    .cc-bar { flex: 1; text-align: center; }
+    .cc-bar-lbl { font-size: 9px; color: rgba(255,255,255,0.35); margin-bottom: 3px; }
+    .bar-track { height: 5px; background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 99px; }
+
+    /* ── Commit modal ── */
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 150; align-items: center; justify-content: center; padding: 16px; }
+    .overlay.open { display: flex; }
+    .modal { background: #0d1829; border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 22px; width: 100%; max-width: 400px; max-height: 88vh; overflow-y: auto; }
+    .modal-close { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: rgba(255,255,255,0.5); font-size: 12px; cursor: pointer; padding: 7px 12px; float: right; margin-bottom: 12px; }
+    .commit-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+    .qty-btn { width: 26px; height: 26px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; color: #e5e7eb; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .qty-num { font-size: 14px; font-weight: 700; color: #f9fafb; font-family: monospace; min-width: 20px; text-align: center; }
+    .dur-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .dur-opt { padding: 10px 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: rgba(255,255,255,0.5); font-size: 11px; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.2s; }
+    .dur-opt.sel { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.4); color: #6ee7b7; }
+    .detail-box { width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #e5e7eb; font-size: 12px; outline: none; resize: vertical; min-height: 70px; margin-bottom: 12px; font-family: system-ui; }
+    .when-sel { width: 100%; padding: 9px 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e5e7eb; font-size: 12px; outline: none; margin-bottom: 12px; }
+    .when-sel option { background: #0d1829; }
+    .confirm-text { font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 14px; line-height: 1.6; background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.15); border-radius: 8px; padding: 10px; }
+    .confirm-text strong { color: #6ee7b7; }
+
+    /* ── About modal ── */
+    .pill { display: inline-block; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; margin: 3px; }
+    .pill-r { background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+    .pill-g { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
+    .pill-b { background: rgba(59,130,246,0.12); color: #93c5fd; border: 1px solid rgba(59,130,246,0.25); }
+
+    /* ── Sticker (Redes) ── */
+    .stale-warn { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; padding: 8px 10px; font-size: 11px; color: #f59e0b; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .sticker-wrap { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; overflow: hidden; margin-bottom: 12px; }
+    .sticker { background: linear-gradient(145deg,#1a0a0a,#0f0f1f); border-radius: 20px; margin: 12px; overflow: hidden; }
+    .sticker-hdr { background: rgba(239,68,68,0.9); padding: 14px 16px; }
+    .sticker-badge { background: rgba(255,255,255,0.15); color: white; font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 99px; display: inline-block; margin-bottom: 6px; }
+    .sticker-cname { font-size: 17px; font-weight: 800; color: white; line-height: 1.2; }
+    .sticker-body { padding: 14px 16px; }
+    .sticker-clusters { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .sc { background: rgba(255,255,255,0.06); border-radius: 10px; padding: 8px; text-align: center; }
+    .sc-pct { font-size: 15px; font-weight: 800; font-family: monospace; }
+    .sc-lbl { font-size: 9px; color: rgba(255,255,255,0.35); }
+    .sticker-needs { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); border-radius: 8px; padding: 8px 10px; font-size: 11px; color: #fca5a5; margin-bottom: 10px; }
+    .sticker-footer { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+    .sh-row { display: flex; gap: 8px; }
+    .sh-btn { padding: 11px; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; flex: 1; }
+    .sh-wa { background: rgba(37,211,102,0.85); color: white; }
+    .sh-ig { background: rgba(225,48,108,0.85); color: white; }
+
+    /* ── Funding ── */
+    .fund-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; text-decoration: none; display: block; }
+    .fund-card:hover { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.3); }
+    .fund-card-title { font-size: 13px; font-weight: 700; color: #f9fafb; margin-bottom: 4px; line-height: 1.3; }
+    .fund-card-org { font-size: 11px; color: rgba(245,158,11,0.8); margin-bottom: 6px; }
+    .fund-card-desc { font-size: 11px; color: rgba(255,255,255,0.45); line-height: 1.5; margin-bottom: 10px; }
+    .fund-progress { height: 6px; background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; margin-bottom: 5px; }
+    .fund-fill { height: 100%; border-radius: 99px; background: rgba(245,158,11,0.7); }
+    .fund-stats { display: flex; justify-content: space-between; font-size: 10px; color: rgba(255,255,255,0.35); }
+
+    /* ── Success screen ── */
+    .success-screen { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 200; align-items: center; justify-content: center; padding: 24px; flex-direction: column; text-align: center; }
+    .success-screen.open { display: flex; }
+    .success-icon { font-size: 52px; margin-bottom: 14px; animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+    .success-title { font-size: 18px; font-weight: 800; color: #f9fafb; margin-bottom: 8px; }
+    .success-sub { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.6; margin-bottom: 20px; max-width: 280px; }
+    .success-close { padding: 11px 24px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; color: #e5e7eb; font-weight: 600; font-size: 13px; cursor: pointer; }
+
+    /* ── API key notice ── */
+    .api-notice { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 11px; color: #fcd34d; line-height: 1.6; display: none; }
+    .api-notice.show { display: block; }
+  </style>
+</head>
+<body>
+<div id="root">
+
+  <!-- API Key notice (shown if not configured) -->
+  <div class="api-notice" id="apiNotice">
+    <strong>⚠️ Configura tu API key</strong> — Para que la extracción por imagen funcione, reemplaza <code>TU_API_KEY_AQUI</code> en el script con tu clave de Anthropic. En producción usa una variable de entorno.
+  </div>
+
+  <!-- About modal -->
+  <div class="overlay" id="aboutOverlay">
+    <div class="modal">
+      <button class="modal-close" onclick="cl('aboutOverlay')"><i class="ti ti-x"></i> Cerrar</button>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;clear:both">
+        <span style="font-size:34px;display:inline-block;animation:chickenGlow 1.4s infinite">🍗</span>
+        <span style="font-size:26px;font-weight:800;color:#ef4444">APO.YA</span>
+      </div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;margin-bottom:14px">Plataforma de coordinación humanitaria para Venezuela. Conectamos a quienes necesitan ayuda con quienes pueden darla, convirtiendo la solidaridad pasiva en acción concreta.</p>
+      <div style="margin-bottom:14px">
+        <span class="pill pill-r"><i class="ti ti-alert-triangle" style="font-size:11px"></i> Necesito apoyo</span>
+        <span class="pill pill-g"><i class="ti ti-hand-stop" style="font-size:11px"></i> Te apoyo</span>
+        <span class="pill pill-b"><i class="ti ti-share" style="font-size:11px"></i> Apoya en redes</span>
+      </div>
+      <p style="font-size:11px;color:rgba(255,255,255,0.2);font-style:italic;text-align:center;margin-top:10px">por Venezolanos para Venezuela — AS 2026</p>
+    </div>
+  </div>
+
+  <!-- Commit modal -->
+  <div class="overlay" id="commitOverlay">
+    <div class="modal">
+      <button class="modal-close" onclick="cl('commitOverlay')"><i class="ti ti-x"></i> Cancelar</button>
+      <div style="clear:both;margin-bottom:4px">
+        <div style="font-size:15px;font-weight:800;color:#f9fafb" id="cm-title">Confirma tu apoyo</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:14px" id="cm-sub"></div>
+      </div>
+      <div id="cm-body"></div>
+      <button class="submit-grn" onclick="confirmCommit()"><i class="ti ti-check" style="font-size:15px"></i> Confirmar mi compromiso</button>
+    </div>
+  </div>
+
+  <!-- Map tooltip -->
+  <div class="map-tooltip" id="mapTooltip"></div>
+
+  <!-- Success screen -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon" id="sIcon">✅</div>
+    <div class="success-title" id="sTitle">¡Gracias!</div>
+    <div class="success-sub" id="sSub">Tu acción fue registrada.</div>
+    <button class="success-close" onclick="closeSuccess()">Volver al inicio</button>
+  </div>
+
+  <!-- Header -->
+  <div class="hdr">
+    <button class="logo-btn" onclick="op('aboutOverlay')">
+      <span class="chicken">🍗</span>
+      <div><div class="logo-text">APO.YA</div><div class="logo-sub">Coordinación humanitaria · Venezuela</div></div>
+    </button>
+    <div class="live-badge"><span class="live-dot"></span>EN VIVO</div>
+  </div>
+
+  <!-- Nav -->
+  <div class="nav">
+    <button class="nb anb" id="nb-home" onclick="goTab('home')"><i class="ti ti-home"></i>Inicio</button>
+    <button class="nb" id="nb-need" onclick="goTab('need')"><i class="ti ti-alert-triangle"></i>Necesito apoyo</button>
+    <button class="nb" id="nb-give" onclick="goTab('give')"><i class="ti ti-hand-stop"></i>Te apoyo</button>
+    <button class="nb" id="nb-share" onclick="goTab('share')"><i class="ti ti-share"></i>Redes</button>
+    <button class="nb" id="nb-fund" onclick="goTab('fund')"><i class="ti ti-heart-handshake"></i>Funding</button>
+  </div>
+
+  <!-- ═══════ INICIO ═══════ -->
+  <div class="scr act" id="scr-home">
+    <div class="sec-title" style="margin-bottom:4px">¿Qué necesitas hacer?</div>
+    <div class="sec-sub">Cada flujo lleva a una acción concreta.</div>
+    <button class="big-btn btn-need" onclick="goTab('need')"><div class="bb-icon">🆘</div><div><div class="bb-title">Necesito apoyo</div><div class="bb-desc">Perdí todo o necesito ayuda urgente ahora mismo</div></div></button>
+    <button class="big-btn btn-give" onclick="goTab('give')"><div class="bb-icon">🤝</div><div><div class="bb-title">Quiero apoyar</div><div class="bb-desc">Tengo recursos, tiempo o vehículo para ayudar</div></div></button>
+    <button class="big-btn btn-share" onclick="goTab('share')"><div class="bb-icon">📢</div><div><div class="bb-title">Apoya en redes</div><div class="bb-desc">Genera tarjeta real para WhatsApp o Instagram</div></div></button>
+    <button class="big-btn btn-fund" onclick="goTab('fund')"><div class="bb-icon">💰</div><div><div class="bb-title">Apoyo de Funding</div><div class="bb-desc">Campañas activas de recaudación de fondos</div></div></button>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num" style="color:#ef4444">14</div><div class="stat-lbl">Centros críticos</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:#fbbf24">103</div><div class="stat-lbl">SOS activos</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:#10b981">61</div><div class="stat-lbl">Compromisos hoy</div></div>
+    </div>
+    <div class="map-wrap" style="margin-top:14px">
+      <div class="map-hdr">
+        <span style="font-size:12px;font-weight:700;color:#f9fafb">Centros activos — Venezuela</span>
+        <div class="map-legend"><span style="color:#ef4444">● Crítico</span><span style="color:#fbbf24">● Bajo</span><span style="color:#10b981">● Estable</span></div>
+      </div>
+      <svg id="vzMap" class="map-svg" viewBox="0 0 500 300"></svg>
+      <div style="padding:6px 14px;font-size:9px;color:rgba(255,255,255,0.2);text-align:right">Toca un punto para ver detalles</div>
+    </div>
+    <p style="font-size:11px;color:rgba(255,255,255,0.2);font-style:italic;text-align:center;margin-top:20px;padding-bottom:8px">por Venezolanos para Venezuela — AS 2026</p>
+  </div>
+
+  <!-- ═══════ NECESITO APOYO ═══════ -->
+  <div class="scr" id="scr-need">
+    <a class="back-lnk" onclick="goTab('home')"><i class="ti ti-arrow-left" style="font-size:13px"></i>Inicio</a>
+    <div class="sec-title">¿Qué necesitas ahora?</div>
+    <div class="sec-sub">Toca tu situación principal para detallar.</div>
+    <div class="macro-grid">
+      <button class="macro-btn" id="mn-agua" onclick="selMacro('agua')"><i class="ti ti-droplet"></i>Agua & Comida</button>
+      <button class="macro-btn" id="mn-med" onclick="selMacro('med')"><i class="ti ti-first-aid-kit"></i>Insumos médicos</button>
+      <button class="macro-btn" id="mn-trap" onclick="selMacro('trap')"><i class="ti ti-map-pin"></i>Estoy atrapado</button>
+    </div>
+    <div class="sub-panel" id="sp-agua">
+      <div class="sec-label">¿Qué necesitas?</div>
+      <div class="tag-wrap">
+        <span class="tag" onclick="this.classList.toggle('sel')">Abrigo</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Agua potable</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Alimentos no perecederos</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Comida preparada</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Fórmula infantil</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Gatorade / jugos</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Sábanas</span>
+        <span class="tag" onclick="toggleOtro('agua',this)">+ Otro</span>
+      </div>
+      <input class="otro-input" id="otro-agua" placeholder="Describe qué necesitas…">
+    </div>
+    <div class="sub-panel" id="sp-med">
+      <div class="sec-label">¿Qué necesitas?</div>
+      <div class="tag-wrap">
+        <span class="tag" onclick="this.classList.toggle('sel')">Alcohol antiséptico</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Analgésicos</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Antiinflamatorios</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Equipo de seguridad</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Gasas</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Medicina pediátrica</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Vendas</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Vitaminas</span>
+        <span class="tag" onclick="toggleOtro('med',this)">+ Otro</span>
+      </div>
+      <input class="otro-input" id="otro-med" placeholder="Describe qué necesitas…">
+    </div>
+    <div class="sub-panel" id="sp-trap">
+      <div class="sec-label">¿Cuántas personas?</div>
+      <div class="tag-wrap">
+        <span class="tag" onclick="this.classList.toggle('sel')">Solo/a</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">2–5 personas</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Familia con niños</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">+10 personas</span>
+        <span class="tag" onclick="this.classList.toggle('sel')">Hay heridos</span>
+        <span class="tag" onclick="toggleOtro('trap',this)">+ Otro</span>
+      </div>
+      <input class="otro-input" id="otro-trap" placeholder="Agrega detalles…">
+    </div>
+    <div class="sec-label" style="margin-top:4px">¿Quién reporta?</div>
+    <div class="reg-grid">
+      <button class="reg-btn" id="rr-com" onclick="selReg('com')"><i class="ti ti-users"></i>Comunidad</button>
+      <button class="reg-btn" id="rr-cen" onclick="selReg('cen')"><i class="ti ti-building-warehouse"></i>Centro de acopio</button>
+      <button class="reg-btn" id="rr-org" onclick="selReg('org')"><i class="ti ti-award"></i>Organización</button>
+    </div>
+    <div class="img-zone">
+      <div class="img-lbl"><i class="ti ti-camera" style="font-size:14px"></i>Carga por imagen — extracción IA</div>
+      <img id="imgPreview" class="img-preview" alt="preview">
+      <div id="imgStatus" class="img-status"></div>
+      <div id="extractedTags" style="margin-bottom:6px"></div>
+      <div id="imgDropArea" class="img-drop" onclick="document.getElementById('imgNeed').click()">
+        <i class="ti ti-upload"></i>
+        <strong>Foto, cartel o captura de WhatsApp</strong>
+        La IA lee texto difuso e infiere contexto
+      </div>
+      <input type="file" id="imgNeed" accept="image/*" style="display:none" onchange="handleImg(event)">
+      <button id="imgRetry" style="display:none;margin-top:8px;width:100%;padding:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:rgba(255,255,255,0.5);font-size:12px;cursor:pointer" onclick="resetImg()"><i class="ti ti-refresh"></i> Cargar otra imagen</button>
+    </div>
+    <div class="sec-label">Ubicación</div>
+    <button class="gps-btn" onclick="grabGPS('need')"><i class="ti ti-current-location"></i>Capturar mi ubicación GPS</button>
+    <div class="gps-ok" id="gps-need"><i class="ti ti-check"></i> Ubicación capturada</div>
+    <button class="submit-red" onclick="submitNeed()"><i class="ti ti-send" style="font-size:15px"></i> Enviar solicitud de apoyo</button>
+  </div>
+
+  <!-- ═══════ TE APOYO ═══════ -->
+  <div class="scr" id="scr-give">
+    <a class="back-lnk" onclick="goTab('home')"><i class="ti ti-arrow-left" style="font-size:13px"></i>Inicio</a>
+    <div class="wiz-step act" id="ws1">
+      <div class="step-lbl">Paso 1 de 3 — Recurso</div>
+      <div class="wq">¿Con qué puedes ayudar?</div>
+      <div class="opt-grid">
+        <button class="opt" id="opt-dinero" onclick="selOpt(this,'dinero')"><i class="ti ti-cash"></i>Dinero / compras</button>
+        <button class="opt" id="opt-tiempo" onclick="selOpt(this,'tiempo')"><i class="ti ti-clock"></i>Tiempo / manos</button>
+        <button class="opt" id="opt-vehiculo" onclick="selOpt(this,'vehiculo')"><i class="ti ti-car"></i>Vehículo</button>
+        <button class="opt" id="opt-espacio" onclick="selOpt(this,'espacio')"><i class="ti ti-home"></i>Espacio / refugio</button>
+      </div>
+      <div class="filter-row">
+        <select class="filter-sel" id="give-estado" onchange="renderCenters()">
+          <option value="">Todos los estados</option>
+          <option>Bolívar</option><option>Carabobo</option><option>Distrito Capital</option>
+          <option>Lara</option><option>Miranda</option><option>Táchira</option><option>Vargas</option><option>Zulia</option>
+        </select>
+        <select class="filter-sel" id="give-need" onchange="renderCenters()">
+          <option value="">Toda necesidad</option>
+          <option>Agua potable</option><option>Alimentos</option><option>Medicamentos</option><option>Ropa</option>
+        </select>
+      </div>
+      <div style="font-size:11px;color:rgba(16,185,129,0.8);font-weight:700;margin-bottom:8px"><i class="ti ti-star" style="font-size:13px"></i> Centro sugerido más cercano</div>
+      <div id="suggested-center"></div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.35);font-weight:700;margin:14px 0 8px">Todos los centros disponibles</div>
+      <div id="all-centers"></div>
+      <button class="next-btn" onclick="goStep(2)">Siguiente <i class="ti ti-arrow-right" style="font-size:13px"></i></button>
+    </div>
+    <div class="wiz-step" id="ws2">
+      <div class="step-lbl">Paso 2 de 3 — Ubicación</div>
+      <div class="wq">¿Dónde estás?</div>
+      <div class="loc-row">
+        <div class="loc-opt" id="lo-gps" onclick="selLoc('gps')"><i class="ti ti-current-location"></i>GPS automático</div>
+        <div class="loc-opt" id="lo-man" onclick="selLoc('man')"><i class="ti ti-keyboard"></i>Ingreso manual</div>
+      </div>
+      <div id="man-input" style="display:none;margin-bottom:12px">
+        <input type="text" placeholder="Ciudad, sector o dirección…" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#e5e7eb;font-size:13px;outline:none">
+      </div>
+      <div class="gps-ok" id="gps-give"><i class="ti ti-check"></i> Ubicación capturada</div>
+      <div class="next-btn" onclick="goStep(3)" style="cursor:pointer;text-align:center;margin-top:10px">Ver mi misión asignada <i class="ti ti-arrow-right"></i></div>
+      <button class="next-btn" onclick="goStep(1)" style="margin-top:6px"><i class="ti ti-arrow-left"></i> Atrás</button>
+    </div>
+    <div class="wiz-step" id="ws3">
+      <div class="step-lbl">Paso 3 de 3 — Misión asignada</div>
+      <div id="mission-card"></div>
+      <button class="next-btn" onclick="goStep(2)" style="margin-top:8px"><i class="ti ti-arrow-left"></i> Atrás</button>
+    </div>
+  </div>
+
+  <!-- ═══════ APOYA EN REDES ═══════ -->
+  <div class="scr" id="scr-share">
+    <a class="back-lnk" onclick="goTab('home')"><i class="ti ti-arrow-left" style="font-size:13px"></i>Inicio</a>
+    <div class="sec-title">Apoya en redes</div>
+    <div class="sec-sub">Tarjeta con datos reales para compartir en Instagram o WhatsApp.</div>
+    <div class="filter-row">
+      <select class="filter-sel" id="share-estado" onchange="renderSticker()">
+        <option value="">-- Elige un estado --</option>
+        <option value="Bolívar">Bolívar</option><option value="Carabobo">Carabobo</option>
+        <option value="Distrito Capital">Distrito Capital</option><option value="Lara">Lara</option>
+        <option value="Miranda">Miranda</option><option value="Táchira">Táchira</option>
+        <option value="Vargas">Vargas</option><option value="Zulia">Zulia</option>
+      </select>
+      <select class="filter-sel" id="share-centro" onchange="renderStickerByCenter()">
+        <option value="">-- O elige un centro --</option>
+      </select>
+    </div>
+    <div class="stale-warn"><i class="ti ti-clock" style="font-size:14px"></i>Datos verificados hace <strong>23 min</strong> · marcados no confirmados a las 6h</div>
+    <div id="sticker-container" style="display:none">
+      <div class="sticker-wrap"><div class="sticker" id="sticker"></div></div>
+      <div class="sh-row">
+        <button class="sh-btn sh-wa" onclick="shareAction('wa')"><i class="ti ti-brand-whatsapp"></i>Estado WhatsApp</button>
+        <button class="sh-btn sh-ig" onclick="shareAction('ig')"><i class="ti ti-brand-instagram"></i>Story Instagram</button>
+      </div>
+    </div>
+    <div id="sticker-placeholder" style="text-align:center;padding:24px;font-size:12px;color:rgba(255,255,255,0.3)">Selecciona un estado o centro para generar la tarjeta</div>
+  </div>
+
+  <!-- ═══════ FUNDING ═══════ -->
+  <div class="scr" id="scr-fund">
+    <a class="back-lnk" onclick="goTab('home')"><i class="ti ti-arrow-left" style="font-size:13px"></i>Inicio</a>
+    <div class="sec-title">Apoyo de Funding</div>
+    <div class="sec-sub">Campañas activas verificadas para la emergencia en Venezuela.</div>
+    <a class="fund-card" href="https://www.gofundme.com/f/help-venezuelas-rescue-team-save-lives-after-the-earthquake" target="_blank" rel="noopener">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div style="flex:1;padding-right:8px">
+          <div class="fund-card-title">Help Venezuela's Rescue Team Save Lives After the Earthquake</div>
+          <div class="fund-card-org"><i class="ti ti-external-link" style="font-size:11px"></i> GoFundMe · Luis Alvarado Bruzual</div>
+        </div>
+        <div style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:6px 10px;text-align:center;flex-shrink:0">
+          <div style="font-size:9px;color:rgba(245,158,11,0.7);font-weight:700">ACTIVA</div>
+          <div style="font-size:16px;color:#f59e0b;font-weight:800">38%</div>
+        </div>
+      </div>
+      <div class="fund-card-desc">Campaña de emergencia para equipar equipos de rescate venezolanos tras los terremotos del 24 de junio de 2026. Fondos para búsqueda y salvamento en zonas afectadas.</div>
+      <div class="fund-progress"><div class="fund-fill" style="width:38%"></div></div>
+      <div class="fund-stats"><span>GoFundMe · Internacional</span><span style="color:#f59e0b;font-weight:600">Donar ahora →</span></div>
+    </a>
+    <a class="fund-card" href="https://www.bulletvalley.info/venezuela" target="_blank" rel="noopener">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div style="flex:1;padding-right:8px">
+          <div class="fund-card-title">Fondo de Emergencia Venezuela</div>
+          <div class="fund-card-org"><i class="ti ti-external-link" style="font-size:11px"></i> Bullet Valley · Internacional</div>
+        </div>
+        <div style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:6px 10px;text-align:center;flex-shrink:0">
+          <div style="font-size:9px;color:rgba(245,158,11,0.7);font-weight:700">ACTIVA</div>
+          <div style="font-size:16px;color:#f59e0b;font-weight:800">22%</div>
+        </div>
+      </div>
+      <div class="fund-card-desc">Recaudación internacional para apoyo humanitario y reconstrucción. Coordinada con organizaciones venezolanas en terreno.</div>
+      <div class="fund-progress"><div class="fund-fill" style="width:22%"></div></div>
+      <div class="fund-stats"><span>Bullet Valley · Internacional</span><span style="color:#f59e0b;font-weight:600">Donar ahora →</span></div>
+    </a>
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px;text-align:center;font-size:11px;color:rgba(255,255,255,0.25);line-height:1.6">
+      Las campañas son externas a APO.YA.<br>Verifica la legitimidad antes de donar.
+    </div>
+  </div>
+
+</div><!-- #root -->
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────────────────
+// La API key ya NO vive aquí. Todas las llamadas a IA van a través del proxy
+// de Vercel en /api/claude, que inyecta la clave desde variables de entorno.
+const API_PROXY = '/api/claude';
+
+// ── Data ──────────────────────────────────────────────────────────────────
+const CENTERS = [
+  {id:1,name:"Cruz Roja Venezolana",loc:"Caracas, D. Capital",estado:"Distrito Capital",contact:"0212-5559111",horario:"24 hrs",lat:10.491,lng:-66.879,pct:22,comida:20,aloj:18,med:28,needs:"Medicamentos básicos, agua potable"},
+  {id:2,name:"Acopio Las Mercedes",loc:"Las Mercedes, Caracas",estado:"Distrito Capital",contact:"0412-1234567",horario:"8am–8pm",lat:10.480,lng:-66.858,pct:17,comida:15,aloj:22,med:14,needs:"CRÍTICO: Todo agotado"},
+  {id:3,name:"Escuela Simón Bolívar",loc:"Maracaibo, Zulia",estado:"Zulia",contact:"0414-9876543",horario:"7am–7pm",lat:10.667,lng:-71.612,pct:71,comida:75,aloj:85,med:68,needs:"Falta ropa para niños"},
+  {id:4,name:"Polideportivo Valencia",loc:"Valencia, Carabobo",estado:"Carabobo",contact:"0416-5554433",horario:"6am–10pm",lat:10.167,lng:-68.000,pct:28,comida:32,aloj:12,med:38,needs:"Colchones y cobijas"},
+  {id:5,name:"Liceo Andrés Bello",loc:"Puerto Ordaz, Bolívar",estado:"Bolívar",contact:"0424-7778899",horario:"8am–6pm",lat:8.292,lng:-62.727,pct:8,comida:8,aloj:5,med:6,needs:"EMERGENCIA TOTAL"},
+  {id:6,name:"Iglesia San Francisco",loc:"Barquisimeto, Lara",estado:"Lara",contact:"0418-3332211",horario:"9am–9pm",lat:10.068,lng:-69.347,pct:83,comida:88,aloj:90,med:82,needs:"Bien abastecido"},
+  {id:7,name:"UE La Trinidad",loc:"Petare, Miranda",estado:"Miranda",contact:"0416-4441122",horario:"8am–6pm",lat:10.472,lng:-66.801,pct:31,comida:30,aloj:25,med:38,needs:"Colchones y agua potable"},
+  {id:8,name:"Fundación Mahuampi",loc:"La Guaira, Vargas",estado:"Vargas",contact:"0212-3451234",horario:"24 hrs",lat:10.601,lng:-66.929,pct:11,comida:9,aloj:8,med:15,needs:"CRÍTICO: Zona costera"},
+  {id:9,name:"Petare Norte",loc:"Petare, Miranda",estado:"Miranda",contact:"0424-3334455",horario:"7am–9pm",lat:10.485,lng:-66.798,pct:19,comida:18,aloj:20,med:19,needs:"Agua y alimentos"},
+  {id:10,name:"Parroquia Santa Teresa",loc:"San Cristóbal, Táchira",estado:"Táchira",contact:"0276-3456789",horario:"8am–8pm",lat:7.765,lng:-72.227,pct:44,comida:48,aloj:42,med:41,needs:"Medicamentos pediátricos"},
+];
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+const pctColor = v => v<=20?"#ef4444":v<=50?"#fbbf24":"#10b981";
+const timeStr = () => { const n=new Date(); return n.getHours()+':'+String(n.getMinutes()).padStart(2,'0'); };
+let selCenter = CENTERS[4];
+let recursoActual = 'dinero';
+
+function op(id){ document.getElementById(id).classList.add('open'); }
+function cl(id){ document.getElementById(id).classList.remove('open'); }
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+function goTab(t){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('act'));
+  document.querySelectorAll('.nb').forEach(b=>b.className='nb');
+  document.getElementById('scr-'+t).classList.add('act');
+  const cls={home:'anb',need:'rnb',give:'gnb',share:'snb',fund:'fnb'};
+  document.getElementById('nb-'+t).classList.add(cls[t]);
+  if(t==='give') renderCenters();
+  if(t==='share') populateCentroSel();
+}
+
+// ── Need screen ────────────────────────────────────────────────────────────
+function selMacro(k){
+  document.querySelectorAll('.macro-btn').forEach(b=>b.classList.remove('act'));
+  document.querySelectorAll('.sub-panel').forEach(p=>p.classList.remove('act'));
+  document.getElementById('mn-'+k).classList.add('act');
+  document.getElementById('sp-'+k).classList.add('act');
+}
+function selReg(k){
+  document.querySelectorAll('.reg-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('rr-'+k).classList.add('sel');
+}
+function toggleOtro(k,el){
+  const inp=document.getElementById('otro-'+k);
+  const v=inp.classList.toggle('vis');
+  el.classList.toggle('sel',v);
+  if(v) inp.focus();
+}
+function grabGPS(ctx){
+  const ok=document.getElementById('gps-'+ctx);
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      p=>{ok.style.display='block';ok.innerHTML='<i class="ti ti-check"></i> '+p.coords.latitude.toFixed(4)+', '+p.coords.longitude.toFixed(4);},
+      ()=>{ok.style.display='block';ok.style.color='#f59e0b';ok.innerHTML='<i class="ti ti-alert-triangle"></i> Permiso denegado — ingresa manualmente';}
+    );
+  } else { ok.style.display='block'; ok.innerHTML='<i class="ti ti-check"></i> Ubicación aproximada'; }
+}
+function submitNeed(){ playSound(); showSuccess('🆘','Solicitud enviada','Tu ubicación y necesidades han sido registradas. El equipo de respuesta más cercano recibirá una alerta.'); }
+
+// ── Give / wizard ──────────────────────────────────────────────────────────
+function selOpt(el,tipo){
+  el.closest('.opt-grid').querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  recursoActual=tipo;
+}
+function selLoc(k){
+  document.getElementById('lo-gps').classList.remove('sel');
+  document.getElementById('lo-man').classList.remove('sel');
+  document.getElementById('lo-'+k).classList.add('sel');
+  document.getElementById('man-input').style.display=k==='man'?'block':'none';
+  if(k==='gps') grabGPS('give');
+}
+function goStep(n){
+  document.querySelectorAll('.wiz-step').forEach(s=>s.classList.remove('act'));
+  document.getElementById('ws'+n).classList.add('act');
+  if(n===3) renderMission();
+}
+
+function ccHTML(c,sug){
+  const col=pctColor(c.pct);
+  return `<div class="center-card${sug?' suggested':''}" onclick="pickCenter(${c.id})">
+    ${sug?'<div style="font-size:9px;color:#6ee7b7;font-weight:700;margin-bottom:6px"><i class="ti ti-star" style="font-size:11px"></i> SUGERIDO</div>':''}
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div style="flex:1;padding-right:8px">
+        <div class="cc-name">${c.name}</div>
+        <div class="cc-loc"><i class="ti ti-map-pin" style="font-size:11px"></i>${c.loc}</div>
+        <div class="cc-contact"><i class="ti ti-phone" style="font-size:11px"></i>${c.contact} · ${c.horario}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:20px;font-weight:800;font-family:monospace;color:${col}">${c.pct}%</div>
+        <div style="font-size:9px;color:${col};font-weight:700">${c.pct<=20?'CRÍTICO':c.pct<=50?'BAJO':'ESTABLE'}</div>
+      </div>
+    </div>
+    <div class="cc-bars">
+      <div class="cc-bar"><div class="cc-bar-lbl">🍽️</div><div class="bar-track"><div class="bar-fill" style="width:${c.comida}%;background:${pctColor(c.comida)}"></div></div></div>
+      <div class="cc-bar"><div class="cc-bar-lbl">🛏️</div><div class="bar-track"><div class="bar-fill" style="width:${c.aloj}%;background:${pctColor(c.aloj)}"></div></div></div>
+      <div class="cc-bar"><div class="cc-bar-lbl">💊</div><div class="bar-track"><div class="bar-fill" style="width:${c.med}%;background:${pctColor(c.med)}"></div></div></div>
+    </div>
+    ${c.needs?`<div style="font-size:10px;color:${col};margin-top:8px">${c.needs}</div>`:''}
+  </div>`;
+}
+
+function renderCenters(){
+  const estado=document.getElementById('give-estado').value;
+  let filtered=[...CENTERS].sort((a,b)=>a.pct-b.pct);
+  if(estado) filtered=filtered.filter(c=>c.estado===estado);
+  const sug=filtered[0]||CENTERS[4];
+  selCenter=sug;
+  document.getElementById('suggested-center').innerHTML=ccHTML(sug,true);
+  document.getElementById('all-centers').innerHTML=filtered.slice(1).map(c=>ccHTML(c,false)).join('')||'<div style="font-size:12px;color:rgba(255,255,255,0.3);padding:12px;text-align:center">No hay más centros</div>';
+}
+
+function pickCenter(id){
+  selCenter=CENTERS.find(c=>c.id===id);
+  openCommit();
+}
+
+function openCommit(){
+  const c=selCenter;
+  document.getElementById('cm-title').textContent='Apoyo a '+c.name;
+  document.getElementById('cm-sub').textContent=c.loc+' · '+c.contact+' · '+c.horario;
+  const esDinero=recursoActual==='dinero';
+  let body='';
+  if(esDinero){
+    const items=["Agua potable (caja 12L)","Alimentos no perecederos (kg)","Fórmula infantil","Gatorade / jugos","Vendas y gasas","Analgésicos","Ropa para adulto","Cobijas / sábanas"];
+    window._cQ={};items.forEach((_,i)=>window._cQ[i]=0);
+    body=items.map((it,i)=>`<div class="commit-item"><span style="font-size:12px;color:#e5e7eb">${it}</span><div style="display:flex;align-items:center;gap:8px"><button class="qty-btn" onclick="adjQ(${i},-1)">−</button><span class="qty-num" id="qty-${i}">0</span><button class="qty-btn" onclick="adjQ(${i},1)">+</button></div></div>`).join('');
+    body+=`<div class="sec-label" style="margin:10px 0 6px">¿Cuándo puedes ir?</div><select class="when-sel" id="whenSel" onchange="updC()"><option>Ahora mismo</option><option>Hoy más tarde</option><option>Mañana</option><option>Este fin de semana</option></select><div class="confirm-text" id="confirm-text"><em style="color:rgba(255,255,255,0.3)">Ajusta cantidades para ver tu compromiso</em></div>`;
+  } else {
+    const desc={tiempo:'Cuéntanos cuánto tiempo puedes dar y en qué ayudarás',vehiculo:'Indica disponibilidad y qué puedes transportar',espacio:'Indica cuánto espacio tienes y si tiene agua y luz'};
+    body=`<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:12px;line-height:1.5">${desc[recursoActual]||''}</div>
+      <div class="sec-label">Duración disponible</div>
+      <div class="dur-row" id="durRow">
+        <div class="dur-opt" onclick="selDur(this)">Pocas horas</div>
+        <div class="dur-opt" onclick="selDur(this)">Medio día</div>
+        <div class="dur-opt" onclick="selDur(this)">1 día completo</div>
+        <div class="dur-opt" onclick="selDur(this)">Varios días</div>
+      </div>
+      <div class="sec-label">Detalles</div>
+      <textarea class="detail-box" id="detailBox" placeholder="Ej: Camioneta doble cabina, 500kg, desde las 8am…"></textarea>
+      <div class="sec-label">¿Cuándo puedes empezar?</div>
+      <select class="when-sel" id="whenSel"><option>Ahora mismo</option><option>Hoy más tarde</option><option>Mañana</option><option>Este fin de semana</option></select>`;
+  }
+  document.getElementById('cm-body').innerHTML=body;
+  op('commitOverlay');
+}
+
+function selDur(el){ document.querySelectorAll('#durRow .dur-opt').forEach(d=>d.classList.remove('sel')); el.classList.add('sel'); }
+function adjQ(i,d){ window._cQ[i]=Math.max(0,(window._cQ[i]||0)+d); document.getElementById('qty-'+i).textContent=window._cQ[i]; updC(); }
+function updC(){
+  const when=document.getElementById('whenSel')?.value||'';
+  const names=["cajas agua","kg alimentos","fórmula","bebidas","kits vendas","medicamentos","prendas","cobijas"];
+  const lines=Object.entries(window._cQ||{}).filter(([,v])=>v>0);
+  const ct=document.getElementById('confirm-text');
+  if(!ct) return;
+  if(!lines.length){ct.innerHTML='<em style="color:rgba(255,255,255,0.3)">Ajusta cantidades para ver tu compromiso</em>';return;}
+  ct.innerHTML='Atención: vas a apoyar con '+lines.map(([i,v])=>`<strong>${v} ${names[i]}</strong>`).join(', ')+` a entregar en <strong>${selCenter.name}</strong> — <strong>${when}</strong>. ¿Confirmas?`;
+}
+function confirmCommit(){ cl('commitOverlay'); playSound(); showSuccess('🤝','¡Compromiso registrado!','El centro recibirá una notificación. El inventario se actualizará al momento de tu entrega.'); }
+
+function renderMission(){
+  const c=selCenter;
+  document.getElementById('mission-card').innerHTML=`
+    <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:700;color:#f9fafb;margin-bottom:4px">${c.name}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px"><i class="ti ti-map-pin" style="font-size:11px"></i> ${c.loc}</div>
+      <div style="font-size:11px;color:#f59e0b;margin-bottom:10px"><i class="ti ti-phone" style="font-size:11px"></i> ${c.contact} · ${c.horario}</div>
+      <a href="https://maps.google.com/?q=${c.lat},${c.lng}" target="_blank" rel="noopener" style="display:block;width:100%;padding:11px;background:rgba(16,185,129,0.7);border:none;border-radius:10px;color:white;font-weight:700;font-size:13px;text-align:center;text-decoration:none"><i class="ti ti-map-pin"></i> Cómo llegar — Google Maps</a>
+    </div>
+    <button class="submit-grn" onclick="pickCenter(${c.id})"><i class="ti ti-check"></i> Comprometerme con este centro</button>`;
+}
+
+// ── Share / sticker ────────────────────────────────────────────────────────
+function populateCentroSel(){
+  const sel=document.getElementById('share-centro');
+  sel.innerHTML='<option value="">-- O elige un centro --</option>';
+  CENTERS.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name+' ('+c.pct+'%)';sel.appendChild(o);});
+}
+function renderSticker(){
+  const estado=document.getElementById('share-estado').value;
+  if(!estado){document.getElementById('sticker-container').style.display='none';document.getElementById('sticker-placeholder').style.display='block';return;}
+  const c=[...CENTERS].filter(x=>x.estado===estado).sort((a,b)=>a.pct-b.pct)[0];
+  if(c) buildSticker(c);
+}
+function renderStickerByCenter(){
+  const id=parseInt(document.getElementById('share-centro').value);
+  if(!id) return;
+  const c=CENTERS.find(x=>x.id===id);
+  if(c) buildSticker(c);
+}
+function buildSticker(c){
+  document.getElementById('sticker-container').style.display='block';
+  document.getElementById('sticker-placeholder').style.display='none';
+  document.getElementById('sticker').innerHTML=`
+    <div class="sticker-hdr"><div class="sticker-badge">🍗 APO.YA · ALERTA HUMANITARIA</div><div class="sticker-cname">${c.name}</div></div>
+    <div class="sticker-body">
+      <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:12px"><i class="ti ti-map-pin" style="font-size:12px"></i> ${c.loc}</div>
+      <div class="sticker-clusters">
+        <div class="sc"><div style="font-size:15px;margin-bottom:2px">🍽️</div><div class="sc-pct" style="color:${pctColor(c.comida)}">${c.comida}%</div><div class="sc-lbl">Comida</div></div>
+        <div class="sc"><div style="font-size:15px;margin-bottom:2px">🛏️</div><div class="sc-pct" style="color:${pctColor(c.aloj)}">${c.aloj}%</div><div class="sc-lbl">Alojam.</div></div>
+        <div class="sc"><div style="font-size:15px;margin-bottom:2px">💊</div><div class="sc-pct" style="color:${pctColor(c.med)}">${c.med}%</div><div class="sc-lbl">Medicinas</div></div>
+      </div>
+      <div class="sticker-needs">${c.needs}</div>
+      <div style="font-size:11px;color:rgba(245,158,11,0.8);margin-bottom:10px"><i class="ti ti-phone" style="font-size:12px"></i> ${c.contact} · ${c.horario}</div>
+      <div class="sticker-footer">
+        <div style="display:flex;align-items:center;gap:5px"><span style="font-size:18px">🍗</span><span style="font-size:13px;font-weight:800;color:#ef4444">APO.YA</span></div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.25)">apo.ya · Venezuela 2026 · ${timeStr()}</div>
+      </div>
+    </div>`;
+}
+function shareAction(net){ playSound(); showSuccess('📢','¡Tarjeta lista!','Generada y lista para '+(net==='wa'?'tu estado de WhatsApp':'tu story de Instagram')+'.'); }
+
+// ── Map ────────────────────────────────────────────────────────────────────
+function renderMap(){
+  const svg=document.getElementById('vzMap');
+  const W=500,H=300,LAT_MIN=0.5,LAT_MAX=12.8,LNG_MIN=-73.5,LNG_MAX=-59.5;
+  const proj=(lat,lng)=>({x:((lng-LNG_MIN)/(LNG_MAX-LNG_MIN))*W,y:H-((lat-LAT_MIN)/(LAT_MAX-LAT_MIN))*H});
+  const vzPath="M 58,268 L 44,248 L 30,222 L 24,198 L 27,173 L 34,153 L 44,133 L 55,116 L 70,98 L 88,83 L 108,70 L 130,60 L 155,52 L 178,48 L 200,46 L 222,45 L 245,46 L 268,44 L 288,48 L 305,54 L 320,50 L 338,48 L 355,54 L 368,63 L 378,70 L 390,66 L 405,70 L 420,78 L 435,90 L 445,106 L 450,124 L 448,146 L 440,166 L 428,183 L 418,198 L 415,216 L 420,233 L 425,250 L 420,266 L 408,276 L 390,283 L 368,286 L 345,288 L 320,288 L 295,290 L 268,290 L 242,290 L 215,288 L 188,286 L 162,283 L 138,278 L 115,273 L 92,270 L 58,268 Z";
+  let dots='';
+  CENTERS.forEach(c=>{
+    const p=proj(c.lat,c.lng),col=pctColor(c.pct);
+    if(c.pct<=20) dots+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="9" fill="${col}" opacity="0.15"><animate attributeName="r" values="7;13;7" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.15;0;0.15" dur="2s" repeatCount="indefinite"/></circle>`;
+    dots+=`<circle class="mdot" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${c.pct<=20?7:5}" fill="${col}" stroke="#0a1018" stroke-width="1.5" style="cursor:pointer" data-id="${c.id}" data-name="${c.name}" data-loc="${c.loc}" data-pct="${c.pct}" data-col="${col}"/>`;
+  });
+  svg.innerHTML=`<path d="${vzPath}" fill="#0f1e30" stroke="#1e3a5a" stroke-width="1.5"/>${dots}<text x="8" y="12" font-size="9" fill="rgba(255,255,255,0.18)">Venezuela · ${CENTERS.length} centros activos</text>`;
+  const tt=document.getElementById('mapTooltip');
+  svg.querySelectorAll('.mdot').forEach(dot=>{
+    dot.addEventListener('click',e=>{
+      tt.style.display='block';
+      tt.innerHTML=`<strong style="color:#f9fafb">${dot.dataset.name}</strong><br><span style="color:rgba(255,255,255,0.45)">${dot.dataset.loc}</span><br><span style="color:${dot.dataset.col};font-weight:700;font-size:14px">${dot.dataset.pct}%</span>`;
+      tt.style.left=Math.min(e.clientX+12,window.innerWidth-200)+'px';
+      tt.style.top=(e.clientY-10)+'px';
+      setTimeout(()=>tt.style.display='none',3000);
+    });
+  });
+}
+
+// ── Image extraction ───────────────────────────────────────────────────────
+async function handleImg(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=async ev=>{
+    const base64=ev.target.result.split(',')[1], mediaType=file.type||'image/jpeg';
+    document.getElementById('imgPreview').src=ev.target.result;
+    document.getElementById('imgPreview').style.display='block';
+    document.getElementById('imgDropArea').style.display='none';
+    const status=document.getElementById('imgStatus');
+    status.className='img-status loading'; status.style.display='block';
+    status.innerHTML='<i class="ti ti-loader"></i> Analizando imagen con IA…';
+    document.getElementById('extractedTags').innerHTML='';
+    const CATS=["Abrigo","Agua potable","Alimentos no perecederos","Comida preparada","Fórmula infantil","Gatorade / jugos","Sábanas","Alcohol antiséptico","Analgésicos","Antiinflamatorios","Equipo de seguridad","Gasas","Medicina pediátrica","Vendas","Vitaminas"];
+    try{
+      // ── Llamada al proxy de Vercel — la API key nunca sale al navegador ──
+      const res=await fetch(API_PROXY,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-6',
+          max_tokens:600,
+          messages:[{role:'user',content:[
+            {type:'image',source:{type:'base64',media_type:mediaType,data:base64}},
+            {type:'text',text:`Extrae información humanitaria de esta imagen venezolana. Texto puede ser difuso. Categorías: ${CATS.join(', ')}. Responde SOLO JSON: {"lugar":null,"resumen":"1 oración","confirmados":[],"inferidos":[],"no_claros":[],"confianza":"alta|media|baja"}`}
+          ]}]
+        })
+      });
+      const data=await res.json();
+      const parsed=JSON.parse(data.content?.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim());
+      status.className='img-status '+(parsed.confianza==='baja'?'error':'success');
+      status.innerHTML=(parsed.lugar?`<strong style="color:#f9fafb">${parsed.lugar}</strong> · `:'')+parsed.resumen;
+      let h='';
+      (parsed.confirmados||[]).forEach(t=>h+=`<span class="ext-tag ext-c"><i class="ti ti-check" style="font-size:10px"></i> ${t}</span>`);
+      (parsed.inferidos||[]).forEach(t=>h+=`<span class="ext-tag ext-i"><i class="ti ti-bulb" style="font-size:10px"></i> ${t}</span>`);
+      (parsed.no_claros||[]).forEach(t=>h+=`<span class="ext-tag ext-u"><i class="ti ti-question-mark" style="font-size:10px"></i> ${t}?</span>`);
+      document.getElementById('extractedTags').innerHTML=h;
+      document.getElementById('imgRetry').style.display='block';
+    } catch(err){
+      status.className='img-status error';
+      status.innerHTML='<i class="ti ti-alert-circle"></i> No se pudo procesar. Intenta con foto más clara.';
+      document.getElementById('imgRetry').style.display='block';
+    }
+  };
+  reader.readAsDataURL(file);
+}
+function resetImg(){
+  document.getElementById('imgPreview').style.display='none';
+  document.getElementById('imgStatus').style.display='none';
+  document.getElementById('extractedTags').innerHTML='';
+  document.getElementById('imgDropArea').style.display='block';
+  document.getElementById('imgRetry').style.display='none';
+  document.getElementById('imgNeed').value='';
+}
+
+// ── Sound ──────────────────────────────────────────────────────────────────
+function playSound(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const o1=ctx.createOscillator(),g1=ctx.createGain();
+    o1.connect(g1);g1.connect(ctx.destination);o1.type='sawtooth';
+    o1.frequency.setValueAtTime(200,ctx.currentTime);o1.frequency.exponentialRampToValueAtTime(80,ctx.currentTime+0.1);
+    g1.gain.setValueAtTime(0.25,ctx.currentTime);g1.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.12);
+    o1.start(ctx.currentTime);o1.stop(ctx.currentTime+0.13);
+    const o2=ctx.createOscillator(),g2=ctx.createGain();
+    o2.connect(g2);g2.connect(ctx.destination);o2.type='sine';
+    o2.frequency.setValueAtTime(1046,ctx.currentTime+0.18);
+    g2.gain.setValueAtTime(0.2,ctx.currentTime+0.18);g2.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.75);
+    o2.start(ctx.currentTime+0.18);o2.stop(ctx.currentTime+0.78);
+  } catch(err){}
+}
+
+// ── Success ────────────────────────────────────────────────────────────────
+function showSuccess(icon,title,sub){
+  document.getElementById('sIcon').textContent=icon;
+  document.getElementById('sTitle').textContent=title;
+  document.getElementById('sSub').textContent=sub;
+  op('successScreen');
+}
+function closeSuccess(){ cl('successScreen'); goTab('home'); }
+
+// ── Init ───────────────────────────────────────────────────────────────────
+renderMap();
+renderCenters();
+</script>
+</body>
+</html>
